@@ -1,0 +1,8 @@
+firebase==3.0.1
+Flask==1.1.2
+python-firebase==1.2
+python-jwt
+gcloud
+sseclient
+pycrypto
+requests-toolbelt
