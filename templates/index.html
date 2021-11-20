@@ -60,7 +60,7 @@
   {% if messages %}
     <div class="w3-card-4 w3-container w3-text-white w3-margin w3-round-large">
       <h3>RESPONSES: </h3>
-      {% for message in messages %}
+      {% for message, timestamp in messages|dictsort(reverse=true) %}
         <div class="w3-row w3-flat-wet-asphalt w3-round-xlarge w3-hover-shadow">
           <div class="w3-col" style="width:80px">
             <span class="w3-badge w3-flat-asbestos w3-xxlarge w3-margin">{{ messages[message].userName[0:2] }}</span>

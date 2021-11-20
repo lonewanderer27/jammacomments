@@ -2,8 +2,8 @@ from flask import Flask, redirect, request, url_for, render_template
 from firebase import firebase
 import re
 from badwords import badwords
-import random
 import os
+import datetime
 
 # config
 # server will reload on source changes, and provide a debugger for errors
@@ -49,7 +49,6 @@ def submit_message():
                   if tempword in badwords:
                       asterisks = (numOFasterisk * '*')
                       commentFiltered += str(f"{asterisks} ")
-                      badwordDetected = 'True'
                   else:
                       commentFiltered += str(f"{word} ")
     print(commentFiltered)
@@ -58,6 +57,7 @@ def submit_message():
         'userName': request.form['username'],
         'userEmail': request.form['email'],
         'userTel': request.form['tel'],
+        'timestamp': datetime.datetime.now()
       }
     firebase.post('/messages', message)
     return redirect(url_for('messages'))
