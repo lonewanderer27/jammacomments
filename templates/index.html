@@ -1,5 +1,6 @@
 {% block head %}
 <title>JAMMA Comment</title>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 {% endblock %}
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -67,7 +68,7 @@
               <div class="w3-row w3-border w3-round-large w3-hover-shadow comment" style="background-color: #252a37;">
 
                 <div class="w3-col" style="width:65px">
-                  <img src="{{ messages[message]['profile_url'] }}" alt="" width="50px" class="w3-margin w3-round-xxlarge">
+                  <img src="{{ messages[message]['profile_url'] }}" alt="" width="50px" class="w3-margin w3-round-xxlarge" loading="lazy">
                 </div>
                 <div class="w3-rest w3-container">
                   <h6 class="w3-text-white">{{ messages[message].userName }}:</h6>
@@ -100,7 +101,7 @@
       {% endif %}
       
       <div class="w3-row w3-section">
-        <div class="w3-col" style="width:80px"><img src="{{profile_url}}" alt="" class="w3-round-xxlarge" width="65px"></div>
+        <div class="w3-col" style="width:80px"><img src="{{profile_url}}" alt="" class="w3-round-xxlarge" width="65px" loading="lazy"></div>
         <div class="w3-rest">
           <textarea rows="5" class="w3-input w3-border w3-round-large w3-text-white" name="message" type="text" placeholder="Commenting as {{username}}" style="background-color: #252a37;" required></textarea>
         </div>
@@ -119,7 +120,7 @@
             <div class="w3-row w3-border w3-round-large comment w3-margin-top w3-margin-bottom" style="background-color: #252a37;">
 
               <div class="w3-col" style="width:65px;">
-                <img src="{{ messages[message]['profile_url'] }}" alt="" width="50px" class="w3-margin w3-round-xxlarge">
+                <img src="{{ messages[message]['profile_url'] }}" alt="" width="50px" class="w3-margin w3-round-xxlarge" loading="lazy">
               </div>
               
               <div class="w3-rest w3-container" onmouseenter="document.getElementById('{{message}}_commentoptions').style.display='block'" onmouseleave="document.getElementById('{{message}}_commentoptions').style.display='none'">
