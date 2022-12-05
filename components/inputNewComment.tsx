@@ -7,16 +7,21 @@ import {
   Textarea,
 } from "@nextui-org/react";
 
+import axios from "axios";
+import { getCurrentDateString } from "../utils/time";
 import { useState } from "react";
 
 export default function InputNewComment(props: {
-  addComment: (newComment: {
-    userName: string;
-    userEmail: string;
-    userTel: string;
-    body: string;
-    deleted: string;
-  }) => void;
+  handleAddComment: (
+    commentKey: string,
+    newComment: {
+      userName: string;
+      userEmail: string;
+      userTel: string;
+      body: string;
+      deleted: string;
+    }
+  ) => void;
 }) {
   const [newComment, setNewComment] = useState({
     userName: "",
@@ -36,8 +41,37 @@ export default function InputNewComment(props: {
     });
   }
 
+  function handleAddCommentToDb() {
+    axios
+      .post(
+        "http://localhost:2000/api/comments",
+        {},
+        {
+          headers: {
+            body: newComment.body,
+            profile_url: "",
+            timestamp: getCurrentDateString(),
+            useremail: newComment.userEmail,
+            username: newComment.userName,
+            usertel: newComment.userTel,
+          },
+        }
+      )
+      .then((res) => {
+        console.log("adding new comment to db response:");
+        console.log(res);
+        props.handleAddComment(
+          res.data.data.newCommentKey,
+          res.data.data.newComment
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   function handleAddComment() {
-    props.addComment(newComment);
+    handleAddCommentToDb();
     setNewComment(() => {
       return {
         userName: "",
