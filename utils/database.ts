@@ -15,15 +15,24 @@ export async function getFirebaseDb(): Promise<Database> {
   return admin.database();
 }
 
-export async function getComments(): Promise<{}> {
+export async function getComments(): Promise<[boolean, object, object]> {
   const db = await getFirebaseDb();
   const ref = (await db).ref("messages");
-  let entries = {};
-  const response = await ref.once("value", (snapshot) => {
-    entries = snapshot.val();
-  });
-
-  return [entries, response];
+  let comments = {};
+  let error = {};
+  let success = false;
+  const response = await ref.once(
+    "value",
+    (snapshot) => {
+      comments = snapshot.val();
+      success = true;
+    },
+    (error) => {
+      error = error;
+      success = false;
+    }
+  );
+  return [success, comments, error];
 }
 
 export async function postComment(
@@ -33,21 +42,35 @@ export async function postComment(
   userEmail: string,
   userName: string,
   userTel: string | null
-): Promise<[any, any]> {
+): Promise<[boolean, string, object, object]> {
   const db = await getFirebaseDb();
   const ref = await db.ref("messages");
-  const newCommentRef = await ref.push({
-    body,
-    profile_url: profile_url || "",
-    timestamp: timestamp || getCurrentDateString(),
-    userEmail,
-    userName,
-    userTel: userTel || "",
-  });
+  let error = {};
+  let success = false;
+  const newCommentRef = await ref.push(
+    {
+      body,
+      profile_url: profile_url || "",
+      timestamp: timestamp || getCurrentDateString(),
+      userEmail,
+      userName,
+      userTel: userTel || "",
+    },
+    (error) => {
+      if (error) {
+        console.log("new comment cannot be created, error:");
+        console.log(error);
+        success = false;
+      } else {
+        console.log("comment successfully created!");
+        success = true;
+      }
+    }
+  );
   const newComment = await newCommentRef.get();
   const newCommentKey = await newCommentRef.key;
 
-  return [newComment, newCommentKey];
+  return [success, newCommentKey, newComment, error];
 }
 
 export async function deleteComment(

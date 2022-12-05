@@ -17,25 +17,23 @@ export default async function handler(
       console.log("request params");
       const { userName } = req.query;
       console.log("userName: " + userName);
-      try {
-        const comments = await getComments();
+      const [success, comments, error] = await getComments();
+      if (success) {
         res.status(200).json({
           status: Status.SUCCESS,
           data: {
             comments: comments,
-            commentCount: 39,
           },
           message: null,
           description: null,
         });
-      } catch (err) {
-        console.log(err);
+      } else {
         res.status(500).json({
           status: Status.ERROR,
           data: null,
           message:
             "The server has encountered an error that it doesn't know how to handle",
-          description: err,
+          description: error.toString(),
         });
       }
     }
@@ -44,15 +42,15 @@ export default async function handler(
       const { body, profile_url, timestamp, useremail, username, usertel } =
         req.headers;
       console.log(req.headers);
-      try {
-        const [newComment, newCommentKey] = await postComment(
-          body,
-          profile_url,
-          timestamp,
-          useremail,
-          username,
-          usertel
-        );
+      const [success, newCommentKey, newComment, error] = await postComment(
+        body,
+        profile_url,
+        timestamp,
+        useremail,
+        username,
+        usertel
+      );
+      if (success) {
         res.status(200).json({
           status: Status.SUCCESS,
           data: {
@@ -62,14 +60,13 @@ export default async function handler(
             newCommentKey: newCommentKey,
           },
         });
-      } catch (err) {
-        console.log(err);
+      } else {
         res.status(500).json({
           status: Status.ERROR,
           data: null,
           message:
             "The server has encountered an error that it doesn't know how to handle",
-          description: err,
+          description: error,
         });
       }
     }

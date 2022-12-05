@@ -81,11 +81,11 @@ export default function Home(props) {
 }
 
 export async function getServerSideProps() {
-  const [entries, response] = await getComments();
+  const [success, comments, error] = await getComments();
 
   return {
     props: {
-      comments: entries,
+      comments: comments,
     },
   };
 }
