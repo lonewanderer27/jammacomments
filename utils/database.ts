@@ -50,11 +50,24 @@ export async function postComment(
   return [newComment, newCommentKey];
 }
 
-export async function deleteComment(commentKey: string) {
+export async function deleteComment(
+  commentKey: string
+): Promise<[boolean, object]> {
   const db = await getFirebaseDb();
   const ref = await db.ref(`messages/${commentKey}`);
-  const res = await ref.set(null);
-  return res;
+  let error = {};
+  let success = false;
+  await ref.set(null, (error) => {
+    if (error) {
+      console.log("Comment cannot be deleted, error:");
+      console.log(error);
+      success = false;
+    } else {
+      console.log("Comment successfully deleted!");
+      success = true;
+    }
+  });
+  return [success, error];
 }
 
 export async function hideComment(
