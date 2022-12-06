@@ -2,12 +2,15 @@ import {
   Button,
   Container,
   Input,
+  Loading,
   Row,
   Spacer,
   Textarea,
 } from "@nextui-org/react";
 
+import { NewCommentStatus } from "../enums";
 import axios from "axios";
+import delay from "../utils/delay";
 import { getCurrentDateString } from "../utils/time";
 import { useState } from "react";
 
@@ -23,7 +26,7 @@ export default function InputNewComment(props: {
     }
   ) => void;
 }) {
-  const [newComment, setNewComment] = useState({
+  const [comment, setComment] = useState({
     userName: "",
     userEmail: "",
     userTel: "",
@@ -31,9 +34,22 @@ export default function InputNewComment(props: {
     deleted: "False",
   });
 
-  function handleNewCommentChange(e) {
+  const [commentStatus, setCommentStatus] = useState(
+    () => NewCommentStatus.IDLE
+  );
+
+  function resetCommentText() {
+    setComment((prevCommentText) => {
+      return {
+        ...prevCommentText,
+        body: "",
+      };
+    });
+  }
+
+  function handleCommentChange(e) {
     const { name, value } = e.target;
-    setNewComment((prev) => {
+    setComment((prev) => {
       return {
         ...prev,
         [name]: value,
@@ -42,37 +58,45 @@ export default function InputNewComment(props: {
   }
 
   function handleAddCommentToDb() {
+    setCommentStatus(() => NewCommentStatus.SENDING);
     axios
       .post(
         "http://localhost:2000/api/comments",
         {},
         {
           headers: {
-            body: newComment.body,
+            body: comment.body,
             profile_url: "",
             timestamp: getCurrentDateString(),
-            useremail: newComment.userEmail,
-            username: newComment.userName,
-            usertel: newComment.userTel,
+            useremail: comment.userEmail,
+            username: comment.userName,
+            usertel: comment.userTel,
           },
         }
       )
       .then((res) => {
+        setCommentStatus(() => NewCommentStatus.SUCCESS);
         console.log("adding new comment to db response:");
         console.log(res);
         props.handleAddComment(
           res.data.data.newCommentKey,
           res.data.data.newComment
         );
+        resetCommentText();
       })
       .catch((error) => {
+        setCommentStatus(() => NewCommentStatus.ERROR);
         console.log(error);
+      })
+      .finally(async () => {
+        await delay(1500);
+        setCommentStatus(() => NewCommentStatus.IDLE);
       });
   }
 
   function handleAddComment() {
     handleAddCommentToDb();
-    setNewComment(() => {
+    setComment(() => {
       return {
         userName: "",
         userEmail: "",
@@ -92,7 +116,8 @@ export default function InputNewComment(props: {
           placeholder="lonewanderer27"
           bordered={false}
           name="userName"
-          onChange={handleNewCommentChange}
+          onChange={handleCommentChange}
+          value={comment.userName}
           fullWidth
         />
       </Row>
@@ -103,7 +128,8 @@ export default function InputNewComment(props: {
           placeholder="user@mail.com"
           bordered={false}
           name="userEmail"
-          onChange={handleNewCommentChange}
+          onChange={handleCommentChange}
+          value={comment.userEmail}
           fullWidth
         />
       </Row>
@@ -114,7 +140,8 @@ export default function InputNewComment(props: {
           placeholder="+639983082814"
           bordered={false}
           name="userTel"
-          onChange={handleNewCommentChange}
+          onChange={handleCommentChange}
+          value={comment.userTel}
           fullWidth
         />
       </Row>
@@ -125,14 +152,26 @@ export default function InputNewComment(props: {
           placeholder="Write your thoughts"
           bordered={false}
           name="body"
-          onChange={handleNewCommentChange}
+          onChange={handleCommentChange}
+          value={comment.body}
           fullWidth
         />
       </Row>
       <Spacer y={0.5} />
       <Row fluid justify="flex-end">
-        <Button color="gradient" size="sm" onClick={handleAddComment}>
-          Submit
+        <Button
+          color={
+            commentStatus !== NewCommentStatus.ERROR ? "gradient" : "error"
+          }
+          size="sm"
+          onClick={handleAddComment}
+        >
+          {commentStatus === NewCommentStatus.SENDING && (
+            <Loading type="points-opacity" />
+          )}
+          {(commentStatus === NewCommentStatus.IDLE ||
+            commentStatus === NewCommentStatus.SUCCESS) &&
+            "Send"}
         </Button>
       </Row>
     </Container>

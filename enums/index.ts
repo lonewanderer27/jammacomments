@@ -12,3 +12,10 @@ export enum ActionState {
   REPLYING = "REPLYING",
   DELETING = "DELETING",
 }
+
+export enum NewCommentStatus {
+  SENDING = "sending",
+  SUCCESS = "success",
+  ERROR = "error",
+  IDLE = "idle",
+}
