@@ -7,6 +7,7 @@ import {
   Spacer,
   Text,
   Textarea,
+  Tooltip,
 } from "@nextui-org/react";
 import { UilArrowDown, UilArrowUp } from "@iconscout/react-unicons";
 import { memo, useState } from "react";
@@ -186,12 +187,13 @@ function Comment(props: {
                     <Button onPress={() => toggleAction(ActionState.DELETE)}>
                       Cancel
                     </Button>
-                    <Button
-                      onPress={handleDelete}
-                      title="Your comment can still be reviewed for potential violation after deletion."
+                    <Tooltip
+                      content="Your comment can still be reviewed for violation. Continue?"
+                      contentColor="warning"
+                      hideArrow
                     >
-                      Confirm Delete
-                    </Button>
+                      <Button onPress={handleDelete}>Confirm Delete</Button>
+                    </Tooltip>
                   </Button.Group>
                 </>
               )}
