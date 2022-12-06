@@ -1,10 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import {
-  deleteComment,
-  getComments,
-  hideComment,
-  postComment,
-} from "../../utils/database";
+import { getComments, hideComment, postComment } from "../../utils/database";
 
 import { Status } from "../../enums";
 
