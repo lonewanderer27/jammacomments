@@ -2,7 +2,18 @@ import { Database } from "firebase-admin/lib/database/database";
 import { getCurrentDateString } from "./time";
 
 const admin = require("firebase-admin");
-const serviceAccount = require("../serviceAccountKey.json");
+const serviceAccount = {
+  "type": process.env.TYPE,
+  "project_id": process.env.GOOGLE_PROJECT_TYPE,
+  "private_key_id": process.env.GOOGLE_PROJECT_PRIVATE_KEY_ID,
+  "private_key": process.env.GOOGLE_PROJECT_PRIVATE_KEY,
+  "client_email": process.env.GOOGLE_PROJECT_CLIENT_EMAIL,
+  "client_id": process.env.GOOGLE_PROJECT_CLIENT_ID,
+  "auth_uri": process.env.GOOGLE_PROJECT_AUTH_URI,
+  "token_uri": process.env.GOOGLE_PROJECT_TOKEN_URI,
+  "auth_provider_x509_cert_url": process.env.GOOGLE_PROJECT_AUTH_PROVIDER_X509_CERT_URL,
+  "client_x509_cert_url": process.env.GOOGLE_PROJECT_CLIENT_X509_CERT_URL
+};
 
 export async function getFirebaseDb(): Promise<Database> {
   if (!admin.apps.length) {

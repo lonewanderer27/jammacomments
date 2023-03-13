@@ -37,3 +37,6 @@ next-env.d.ts
 
 # firebase
 serviceAccountKey.json
+.env
+
+*lock*

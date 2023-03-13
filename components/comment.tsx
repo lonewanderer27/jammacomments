@@ -110,9 +110,9 @@ function Comment(props: {
                       margin: "0 10px",
                     }}
                   >
-                    •
+                    {process.env.VERCEL !== "1" ? "•" : ""}
                   </Text>
-                  <Text>{props.commentKey}</Text>
+                  {process.env.VERCEL !== "1" && <Text>{props.commentKey}</Text>}
                 </>
               )}
             </Row>

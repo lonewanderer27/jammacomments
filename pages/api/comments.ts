@@ -38,12 +38,12 @@ export default async function handler(
         req.headers;
       console.log(req.headers);
       const [success, newCommentKey, newComment, error] = await postComment(
-        body,
-        profile_url,
-        timestamp,
-        useremail,
-        username,
-        usertel
+        body[0],
+        profile_url[0],
+        timestamp[0],
+        useremail[0],
+        username[0],
+        usertel[0]
       );
       if (success) {
         res.status(200).json({
@@ -70,7 +70,7 @@ export default async function handler(
     case "DELETE": {
       console.log("request headers");
       const { commentkey } = req.headers;
-      const [success, error] = await hideComment(commentkey);
+      const [success, error] = await hideComment(commentkey[0]);
       if (success) {
         res.status(204).json({
           status: Status.SUCCESS,
